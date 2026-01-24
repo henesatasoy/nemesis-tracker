@@ -9,6 +9,7 @@ import Players from "./pages/Players";
 import LogMatch from "./pages/LogMatch";
 import Analytics from "./pages/Analytics";
 import MatchHistory from "./pages/MatchHistory";
+import Dossier from "./pages/Dossier";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
             <Route path="/log" element={<LogMatch />} />
             <Route path="/analytics" element={<Analytics />} />
             <Route path="/history" element={<MatchHistory />} />
+            <Route path="/dossier" element={<Dossier />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

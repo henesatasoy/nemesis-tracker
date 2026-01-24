@@ -16,6 +16,12 @@ export type DeathCause =
   | 'Contingency Procedure' 
   | 'Event Card';
 
+// Objective & Contingency Types
+export type ObjectiveType = 'CORPORATE' | 'PERSONAL' | 'SOLO_COOP';
+export type ObjectiveStatus = 'DRAFT' | 'ACTIVE' | 'DISCARDED' | 'COMPLETED' | 'FAILED';
+export type ContingencyStatus = 'POSSIBLE' | 'ELIMINATED' | 'SUSPECTED' | 'CONFIRMED';
+export type LethalityType = 'KNOWLEDGE_CHECK' | 'LOCATION_CHECK' | 'CSS_CHECK' | 'GLOBAL_KILL';
+
 // Database row types
 export interface Player {
   id: string;
@@ -48,6 +54,55 @@ export interface MatchParticipant {
   created_at: string;
 }
 
+// Objective & Contingency Types
+export interface ObjectiveCatalog {
+  id: string;
+  title: string;
+  type: ObjectiveType;
+  description: string;
+  min_players: number;
+  max_players: number;
+  created_at: string;
+}
+
+export interface ContingencyCatalog {
+  id: string;
+  name: string;
+  effect_text: string;
+  lethality: LethalityType;
+  created_at: string;
+}
+
+export interface PlayerObjective {
+  id: string;
+  match_id: string;
+  player_id: string;
+  objective_id: string;
+  status: ObjectiveStatus;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PlayerContingencyKnowledge {
+  id: string;
+  match_id: string;
+  player_id: string;
+  contingency_id: string;
+  status: ContingencyStatus;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SessionContingency {
+  id: string;
+  match_id: string;
+  active_contingency_id: string | null;
+  is_revealed: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 // Extended types with relations
 export interface MatchWithParticipants extends Match {
   match_participants: (MatchParticipant & { players: Player })[];
@@ -55,6 +110,14 @@ export interface MatchWithParticipants extends Match {
 
 export interface ParticipantWithPlayer extends MatchParticipant {
   players: Player;
+}
+
+export interface PlayerObjectiveWithDetails extends PlayerObjective {
+  objectives_catalog: ObjectiveCatalog;
+}
+
+export interface PlayerContingencyWithDetails extends PlayerContingencyKnowledge {
+  contingencies_catalog: ContingencyCatalog;
 }
 
 // Form types for the wizard
@@ -105,6 +168,13 @@ export const DEATH_CAUSES: DeathCause[] = [
   'Event Card',
 ];
 
+export const CONTINGENCY_STATUS_ORDER: ContingencyStatus[] = [
+  'POSSIBLE',
+  'ELIMINATED',
+  'SUSPECTED',
+  'CONFIRMED',
+];
+
 // Character icons mapping (Lucide icon names)
 export const CHARACTER_ICONS: Record<CharacterClass, string> = {
   'Sentinel': 'Shield',
@@ -123,4 +193,12 @@ export const CHARACTER_COLORS: Record<CharacterClass, string> = {
   'Lab Rat': 'hsl(var(--chart-5))',
   'Survivor': 'hsl(var(--chart-2))',
   'Xenobiologist': 'hsl(var(--chart-6))',
+};
+
+// Lethality icons and colors
+export const LETHALITY_CONFIG: Record<LethalityType, { icon: string; color: string; label: string }> = {
+  'KNOWLEDGE_CHECK': { icon: 'Brain', color: 'hsl(var(--chart-3))', label: 'Knowledge' },
+  'LOCATION_CHECK': { icon: 'MapPin', color: 'hsl(var(--warning))', label: 'Location' },
+  'CSS_CHECK': { icon: 'Rocket', color: 'hsl(var(--chart-5))', label: 'Escape' },
+  'GLOBAL_KILL': { icon: 'Skull', color: 'hsl(var(--destructive))', label: 'Global' },
 };

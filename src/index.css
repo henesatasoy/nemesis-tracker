@@ -73,6 +73,10 @@
     --chart-4: 38 92% 50%;
     --chart-5: 280 65% 60%;
     --chart-6: 180 70% 45%;
+
+    /* Custom: Corporate objective cyan */
+    --corporate: 217 91% 60%;
+    --corporate-foreground: 0 0% 98%;
   }
 
   /* Same theme for both modes (dark-first design) */
