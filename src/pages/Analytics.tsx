@@ -1,17 +1,19 @@
-import { BarChart3, PieChart, Map, Users, Trophy } from 'lucide-react';
+import { BarChart3, PieChart, Map, Users, Trophy, DoorOpen } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useCharacterStats, useDeathStats, useMapStats, usePlayerStats } from '@/hooks/useStats';
+import { useCharacterStats, useDeathStats, useMapStats, usePlayerStats, useEscapeStats } from '@/hooks/useStats';
 import { Skeleton } from '@/components/ui/skeleton';
 import { CharacterWinRateChart } from '@/components/charts/CharacterWinRateChart';
 import { DeathCausePieChart } from '@/components/charts/DeathCausePieChart';
 import { MapComparisonCard } from '@/components/charts/MapComparisonCard';
 import { PlayerLeaderboard } from '@/components/charts/PlayerLeaderboard';
+import { EscapeMethodChart } from '@/components/charts/EscapeMethodChart';
 
 export default function Analytics() {
   const { data: characterStats, isLoading: charLoading } = useCharacterStats();
   const { data: deathStats, isLoading: deathLoading } = useDeathStats();
   const { data: mapStats, isLoading: mapLoading } = useMapStats();
   const { data: playerStats, isLoading: playerLoading } = usePlayerStats();
+  const { data: escapeStats, isLoading: escapeLoading } = useEscapeStats();
 
   const hasAnyData = characterStats?.some((c) => c.gamesPlayed > 0);
 
@@ -63,6 +65,23 @@ export default function Analytics() {
             <DeathCausePieChart data={deathStats} />
           ) : (
             <p className="text-center text-muted-foreground py-8">No deaths recorded yet!</p>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Escape Methods */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <DoorOpen className="h-5 w-5 text-chart-2" />
+            Escape Routes
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {escapeLoading ? (
+            <Skeleton className="h-64 w-full" />
+          ) : (
+            <EscapeMethodChart data={escapeStats || []} />
           )}
         </CardContent>
       </Card>

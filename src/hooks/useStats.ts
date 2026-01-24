@@ -178,6 +178,44 @@ export function useMapStats() {
   });
 }
 
+interface EscapeStats {
+  method: string;
+  count: number;
+  percentage: number;
+}
+
+export function useEscapeStats() {
+  return useQuery({
+    queryKey: ['stats', 'escapes'],
+    queryFn: async (): Promise<EscapeStats[]> => {
+      const { data, error } = await supabase
+        .from('match_participants')
+        .select('escape_method')
+        .eq('status', 'Survived')
+        .not('escape_method', 'is', null);
+      
+      if (error) throw error;
+
+      const methodCounts = new Map<string, number>();
+      
+      data?.forEach(p => {
+        const method = p.escape_method as string;
+        methodCounts.set(method, (methodCounts.get(method) || 0) + 1);
+      });
+
+      const total = data?.length || 0;
+
+      return Array.from(methodCounts.entries())
+        .map(([method, count]) => ({
+          method,
+          count,
+          percentage: total > 0 ? (count / total) * 100 : 0,
+        }))
+        .sort((a, b) => b.count - a.count);
+    },
+  });
+}
+
 export function usePlayerStats() {
   return useQuery({
     queryKey: ['stats', 'players'],
